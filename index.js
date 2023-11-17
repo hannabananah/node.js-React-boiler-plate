@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config = require("./config/key");
 const { User } = require("./models/User");
+const { auth } = require("./middleware/auth.js");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -21,7 +22,7 @@ app.get("/", (req, res) => {
   res.send("hello world~~");
 });
 
-app.post("/register", async (req, res) => {
+app.post("/api/users/register", async (req, res) => {
   try {
     const user = new User(req.body);
     const userInfo = await user.save();
@@ -33,7 +34,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/login", async (req, res) => {
+app.post("/api/users/login", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
 
@@ -62,6 +63,24 @@ app.post("/login", async (req, res) => {
       .json({ loginSuccess: true, userId: user._id });
   } catch (err) {
     return res.status(500).json({ loginSuccess: false, error: err.message });
+  }
+});
+
+// role 0 일반유저 role 0아니면 관리자
+app.post("/api/users/auth", auth, async (req, res) => {
+  try {
+    res.status(200).json({
+      _id: req.user._id,
+      isAdmin: req.user.role === 0 ? false : true,
+      isAuth: true,
+      email: req.user.email,
+      name: req.user.name,
+      lastname: req.user.lastname,
+      role: req.user.role,
+      image: req.user.image,
+    });
+  } catch (err) {
+    return res.json({ success: false, err });
   }
 });
 
