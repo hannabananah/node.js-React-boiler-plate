@@ -70,17 +70,18 @@ userSchema.methods.generateToken = async function () {
   }
 };
 
-userSchema.statics.findByToken = function (token, cb) {
-  var user = this;
+userSchema.statics.findByToken = async function (token) {
+  const findUser = this;
 
-  jwt.verify(token, "secretToken", function (err, decoded) {
-    // 클라에서 가져온 token와 디비에 보관된 토큰 일치 여부 확인
+  // 클라에서 가져온 token와 디비에 보관된 토큰 일치 여부 확인
 
-    user.findOne({ _id: decoded, token: token }, function (err, user) {
-      if (err) return cb(err);
-      cb(null, user);
-    });
-  });
+  try {
+    const decoded = jwt.verify(token, "secretToken");
+    const foundUser = await findUser.findOne({ _id: decoded, token: token });
+    return foundUser;
+  } catch (err) {
+    throw err;
+  }
 };
 
 const User = mongoose.model("User", userSchema);

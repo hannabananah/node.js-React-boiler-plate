@@ -3,8 +3,8 @@ const app = express();
 const port = 5000;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const config = require("./config/key");
-const { User } = require("./models/User");
+const config = require("../config/key.js");
+const { User } = require("./models/User.js");
 const { auth } = require("./middleware/auth.js");
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -79,6 +79,15 @@ app.post("/api/users/auth", auth, async (req, res) => {
       role: req.user.role,
       image: req.user.image,
     });
+  } catch (err) {
+    return res.json({ success: false, err });
+  }
+});
+
+app.get("/api/users/logout", auth, async (req, res) => {
+  try {
+    await User.findOneAndUpdate({ _id: req.user._id }, { token: "" });
+    return res.status(200).send({ success: true });
   } catch (err) {
     return res.json({ success: false, err });
   }
