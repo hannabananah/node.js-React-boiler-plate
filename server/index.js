@@ -1,9 +1,8 @@
 const express = require("express");
 const app = express();
-const port = 5000;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const config = require("../config/key.js");
+const config = require("./config/key.js");
 const { User } = require("./models/User.js");
 const { auth } = require("./middleware/auth.js");
 
@@ -20,6 +19,10 @@ mongoose
 
 app.get("/", (req, res) => {
   res.send("hello world~~");
+});
+
+app.get("/api/hello", async (req, res) => {
+  await res.send("안녕하세요.");
 });
 
 app.post("/api/users/register", async (req, res) => {
@@ -92,5 +95,7 @@ app.get("/api/users/logout", auth, async (req, res) => {
     return res.json({ success: false, err });
   }
 });
+
+const port = 5000;
 
 app.listen(port, () => console.log(`listening on ${port} port!`));
