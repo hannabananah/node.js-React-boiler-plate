@@ -7,7 +7,7 @@ export function loginUser(dataToSubmit) {
       const res = await axios.post("/api/users/login", dataToSubmit);
       dispatch({
         type: LOGIN_USER,
-        payload: res.data, // Use res.data directly instead of res
+        payload: res.data,
       });
       return res;
     } catch (error) {
