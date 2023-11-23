@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../../_actions/user_action";
-function LoginPage(props) {
+import { useNavigate } from "react-router-dom";
+
+function LoginPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +18,7 @@ function LoginPage(props) {
     setPassword(e.target.value);
   };
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     let body = {
@@ -23,14 +26,21 @@ function LoginPage(props) {
       password: password,
     };
 
-    dispatch(loginUser(body)).then((res) => {
+    try {
+      const res = await dispatch(loginUser(body));
+
       console.log(res);
-      if (res.payload && res.payload.loginSuccess) {
-        props.history.push("/");
+      console.log(res.data);
+
+      if (res.data && res.data.loginSuccess) {
+        navigate("/");
       } else {
         alert("Error");
       }
-    });
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred during login");
+    }
   };
 
   return (
