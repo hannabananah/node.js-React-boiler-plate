@@ -23,7 +23,7 @@ export function registerUser(dataToSubmit) {
       const res = await axios.post("/api/users/register", dataToSubmit);
       dispatch({
         type: REGISTER_USER,
-        payload: res.data, // Use res.data directly instead of res
+        payload: res.data,
       });
       return res;
     } catch (error) {
@@ -33,16 +33,18 @@ export function registerUser(dataToSubmit) {
   };
 }
 
-export const auth = () => async (dispatch) => {
-  try {
-    const response = await axios.get("/api/users/auth");
-    dispatch({
-      type: AUTH_USER,
-      payload: response.data,
-    });
-    return response;
-  } catch (error) {
-    console.error("Authentication failed:", error);
-    throw error;
-  }
-};
+export function auth() {
+  return async (dispatch) => {
+    try {
+      const res = await axios.get("/api/users/auth");
+      dispatch({
+        type: AUTH_USER,
+        payload: res.data,
+      });
+      return res;
+    } catch (error) {
+      console.error("Authentication failed:", error);
+      throw error;
+    }
+  };
+}

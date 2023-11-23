@@ -70,7 +70,7 @@ app.post("/api/users/login", async (req, res) => {
 });
 
 // role 0 일반유저 role 0아니면 관리자
-app.post("/api/users/auth", auth, async (req, res) => {
+app.get("/api/users/auth", auth, async (req, res) => {
   try {
     res.status(200).json({
       _id: req.user._id,
